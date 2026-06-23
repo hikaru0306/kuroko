@@ -19,6 +19,10 @@ attach_bonus:
   main_attacker: 0.0   # メインアタッカーへ付ける加点
   active: 0.0          # アクティブへ付ける加点
 
+# エネをメインアタッカー/アクティブへ集中させるか。
+# サンプルデッキ(3アタッカー)では分散の方が強かったため false。1体集中型なら true。
+concentrate_energy: false
+
 # 場づくりで最低限ベンチに並べたい「たねポケモン」の数
 desired_bench_pokemon: 3
 

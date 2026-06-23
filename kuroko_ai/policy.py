@@ -69,14 +69,51 @@ class Policy:
             return [best] if best is not None else [d.options[0]]
 
         # engine_order: 基本はエンジン順の先頭(index 0)を信頼する。
-        # ただし攻撃局面（先頭がワザ＝展開を一通り終えた状態）に限り、
-        # ワザ選択だけは最適化する: KOできるなら最小打点でKO、無理なら最大打点。
+        # ただし「何をするか」の順序はエンジンに従いつつ、以下の局面では
+        # 「対象/ワザの選び方」だけを最適化する。
+        head = d.options[0]
+
+        # (1) 攻撃局面: ワザ選択を効率スコアで最適化（KO/副作用込み）
         if self.cfg.get("enable_ko_override", False):
             attacks = [o for o in d.options if o.type == OptionType.ATTACK]
-            head_is_attack = d.options and d.options[0].type == OptionType.ATTACK
+            head_is_attack = head.type == OptionType.ATTACK
             if attacks and (head_is_attack or self._find_ko_attack(state, d) is not None):
                 return [self._best_attack(state, attacks)]
-        return [d.options[0]]
+
+        # (2) エネ付け局面: エンジンが「今エネを付ける」と判断したら(先頭がエネ付け)、
+        #     付け先をメインアタッカー/アクティブへ集中させる。
+        if self.cfg.get("concentrate_energy", True) and head.type == OptionType.ATTACH_ENERGY:
+            attaches = [o for o in d.options if o.type == OptionType.ATTACH_ENERGY]
+            return [self._best_energy_target(state, attaches)]
+
+        return [head]
+
+    def _best_energy_target(self, state: GameState, attaches: list[Option]) -> Option:
+        """エネの付け先を選ぶ。メインアタッカー > アクティブ > その他。
+
+        理想のムーブ「エネはアタッカーに集中」を表現。付け先は option の
+        inPlayArea/inPlayIndex（自分の場）で示される。同点はエンジン順を維持。
+        """
+        def score(o: Option) -> float:
+            cid = self._inplay_card_id(o, state, state.your_index)
+            s = 0.0
+            if cid is not None:
+                role = self.cards.role_of(cid)
+                if role == "main_attacker":
+                    s += 100.0
+                elif role == "sub_attacker":
+                    s += 50.0
+            if o.in_play_area == 1:   # アクティブ（多くの場合の攻撃役）
+                s += 20.0
+            return s
+
+        best = attaches[0]
+        best_s = score(best)
+        for o in attaches[1:]:
+            s = score(o)
+            if s > best_s:
+                best, best_s = o, s
+        return best
 
     def _best_attack(self, state: GameState, attacks: list[Option]) -> Option:
         """ワザ選択。最大打点ではなく『効率スコア』で選ぶ。
