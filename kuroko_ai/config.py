@@ -27,9 +27,9 @@ DEFAULTS: dict[str, Any] = {
         #                     ローカル実測で最も強い。推奨デフォルト。
         #   "priority"     … 下の action_priority + evaluation で完全に並べ替える(実験用)
         "action_menu_mode": "engine_order",
-        # KO 上書き: 確実に倒せるワザを最優先。ただし正確なカードDB(HP/打点)が必要。
-        # 仮データのままだと誤判定で逆効果になるため既定 OFF。
-        "enable_ko_override": False,
+        # KO 上書き: 確実に倒せるワザを最優先。deck.yaml に実測ワザ打点が入ったため既定 ON。
+        # （カードDBが不正確だと誤判定で逆効果になり得るので、デッキ差し替え時は要再検証）
+        "enable_ko_override": True,
         # エネ付け先の加点（正確なカードDB整備後に有効化推奨）
         "attach_bonus": {"main_attacker": 0.0, "active": 0.0},
         # 場づくりで最低限欲しいベンチのたねポケモン数

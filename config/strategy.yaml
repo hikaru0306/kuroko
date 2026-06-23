@@ -10,9 +10,9 @@
 #                カードDB(deck.yaml)を正しく整備すると伸ばせる余地がある。
 action_menu_mode: engine_order
 
-# KO上書き: 確実に倒せるワザを最優先する。正確なカードDB(HP/ワザ打点)が前提。
-# 仮データのままだと誤KO判定で早すぎる攻撃をして逆効果なので、まずは false 推奨。
-enable_ko_override: false
+# KO上書き: 確実に倒せるワザを最優先する。deck.yaml に実測ワザ打点が入ったので ON。
+# （デッキを差し替えたら deck.yaml を整備し直すまで一旦 false に戻すと安全）
+enable_ko_override: true
 
 # エネルギーを付ける先の加点（deck.yaml のHP/役割を整備してから有効化推奨）
 attach_bonus:

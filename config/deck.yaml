@@ -1,61 +1,62 @@
 # =====================================================================
 # デッキ定義 + カード知識ベース
 # =====================================================================
-# observation には「カードid」しか来ないため、各idが何のカードかは
-# ここで人が定義する（= 公式サイトの「指定カードリスト」を見て埋める）。
+# observation には「カードid」しか来ないため、各idの意味はここで定義する。
 #
-# ★ 下の cards: の中身は self-play で出現したidに対する“仮の役割付け”です。
-#    各 name / category / hp / 役割は公式カードリストで必ず確認・修正してください。
-#    （最低限 main_attacker と basic_energy が正しければ、エネ付け先と
-#      攻撃の狙いが機能します）
+# ★ 下の値の多くは tools/mine_cards.py が cabt 自己対戦ログから抽出した
+#   「実測の下書き」です（ワザid・打点・HP・カテゴリ）。名前と一部の分類は
+#   公式の「指定カードリスト」で必ず検証・補正してください。
+#   再生成: .venv/bin/python tools/mine_cards.py --games 100 --out config/deck.auto.yaml
 #
-# deck: を書くとこちらが deck.csv より優先されます（どちらか一方でOK）。
-# ここでは deck.csv を真実の源にするため deck: は省略しています。
+# deck: を書くと deck.csv より優先。ここでは deck.csv を真実の源にするため省略。
 
 cards:
+  # --- エネルギー（実測: エネとして場に付けられている） ---
   3:
     name: "基本エネルギー(仮)"
     category: basic_energy
 
+  1163:
+    name: "エネルギー(仮)"          # 特殊エネの可能性あり → 要確認
+    category: basic_energy
+
+  # --- アタッカー進化ライン 721 → 722 → 723（実測） ---
   721:
-    name: "ポケモンA(仮)"
+    name: "card721(仮)"
     category: pokemon
-    stage: 0          # たね
-    hp: 70
+    stage: 0                       # たね（推定）
+    hp: 170                        # 実測推定・要確認
     role: starter
+    attacks:
+      - {id: 1042, damage: 20}     # 実測: 観測打点の最頻値
+      - {id: 1043, damage: 130}
 
   722:
-    name: "ポケモンB(仮)"
+    name: "card722(仮)"
     category: pokemon
-    stage: 1
-    hp: 90
-    evolves_from: 721
+    stage: 1                       # 1進化（推定）
+    hp: 100                        # 実測推定・要確認（721より低く出ており要検証）
+    evolves_from: 721              # 推定
+    attacks:
+      - {id: 1044, damage: 10}
+      - {id: 1045, damage: 30}
 
   723:
-    name: "ポケモンC(仮)"
+    name: "card723(仮)"
     category: pokemon
-    stage: 2
-    hp: 160
-    evolves_from: 722
-    role: sub_attacker
-
-  1219:
-    name: "メインアタッカー(仮)"
-    category: pokemon
-    stage: 0
-    hp: 230
-    is_ex: true
-    role: main_attacker
+    stage: 2                       # 2進化（実測で evolves を確認）
+    hp: 400                        # 実測推定・要確認
+    evolves_from: 722              # 実測推定
+    role: main_attacker            # 最大打点のアタッカー
     attacks:
-      - {id: 1044, cost: 2, damage: 200}   # ← attackId/打点は要確認
+      - {id: 1046, damage: 300}    # 主力ワザ
+      - {id: 1047, damage: 200}
 
-  1092:
-    name: "トレーナーズ(仮)"
-    category: supporter
-    role: draw
-
-  1121: {name: "トレーナーズ(仮)", category: supporter, role: search}
-  1145: {name: "ポケモン(仮)", category: pokemon, stage: 0, hp: 70}
-  1163: {name: "グッズ(仮)", category: item}
-  1227: {name: "グッズ(仮)", category: item}
-  1262: {name: "サポート(仮)", category: supporter, role: draw}
+  # --- トレーナーズ or 控えポケモン（実測では判別不能 → 要・公式リスト確認） ---
+  # mine_cards.py ではワザ/エネ受け/進化のいずれも観測されず。多くはサポート/グッズと推測。
+  1092: {name: "card1092(仮・要確認)", category: item}
+  1121: {name: "card1121(仮・要確認)", category: item}
+  1145: {name: "card1145(仮・要確認)", category: item}
+  1219: {name: "card1219(仮・要確認)", category: item}
+  1227: {name: "card1227(仮・要確認)", category: item}
+  1262: {name: "card1262(仮・要確認)", category: item}

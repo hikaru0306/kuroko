@@ -19,8 +19,8 @@ YAML が無い/PyYAML が無い環境でも `kuroko_ai/config.py` の `DEFAULTS`
 
 | 対戦相手 | 勝率 |
 |----------|------|
-| `random`（ランダム） | **約 83%** |
-| `first`（エンジン同梱の強baseline。randomに87%勝つ） | **約 60%**（同席条件） |
+| `random`（ランダム） | **約 87%** |
+| `first`（エンジン同梱の強baseline。randomに87%勝つ） | **約 57%**（同席条件） |
 
 > cabt エンジンは選択肢を「展開→エネ→進化→攻撃→終了」の良い順に並べてくれる。
 > 現状の主戦略 `action_menu_mode: engine_order` はこの順序を信頼し、無駄な
@@ -40,9 +40,16 @@ python3 -m venv .venv && .venv/bin/pip install kaggle-environments pyyaml
 # 3) スモークテスト
 .venv/bin/python -m pytest tests/ -q     # または: .venv/bin/python tests/test_agent_smoke.py
 
-# 4) 提出物 submission.tar.gz を作る（main.py を最上位に同梱）
+# 4) カード情報を自己対戦ログから自動抽出（公式リスト未入手でも下書きが作れる）
+.venv/bin/python tools/mine_cards.py --games 100 --out config/deck.auto.yaml
+
+# 5) 提出物 submission.tar.gz を作る（main.py を最上位に同梱）
 bash tools/build_submission.sh
 ```
+
+> `tools/mine_cards.py` は cabt 自己対戦ログから cardId→ワザid・打点・HP・カテゴリを
+> 実測抽出する補助ツール。公式の「指定カードリスト」が手に入らない段階でも、
+> `config/deck.yaml` を埋める下書きを作れる（必ず公式リストで検証すること）。
 
 `submission.tar.gz` を Kaggle のシミュレーション部門にアップロードする。
 
