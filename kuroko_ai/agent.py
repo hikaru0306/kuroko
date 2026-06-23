@@ -41,7 +41,8 @@ class KurokoAgent:
 
         self.plan = GamePlan(self.config.strategy, self.cards)
         self.evaluator = Evaluator(
-            self.config.evaluation["weights"], self.cards, default_hp=default_hp
+            self.config.evaluation["weights"], self.cards, default_hp=default_hp,
+            attack_weights=self.config.evaluation.get("attack", {}),
         )
         self.opp_model = OpponentModel(self.config.reads)
         self.policy = Policy(

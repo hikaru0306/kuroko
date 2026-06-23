@@ -45,6 +45,14 @@ class Attack:
     cost: int = 1
     damage: int = 0
     name: str = ""
+    # --- 副作用（効率評価で使う。0/False が「効果なし」） -----------------
+    self_damage: int = 0          # 反動: 自分のアクティブが受けるダメージ
+    bench_damage: int = 0         # 相手ベンチ1体あたりに与えるダメージ
+    bench_targets: int = 0        # ベンチに当たる体数
+    attaches_energy: int = 0      # 攻撃しながら付けられるエネ枚数（加速）
+    discards_energy: int = 0      # 自分のエネを捨てる枚数（次の攻撃に響く）
+    cant_attack_next: bool = False  # 次ターン攻撃できない（反動ロック）
+    heal: int = 0                 # 自分の回復量
 
 
 @dataclass
@@ -102,6 +110,13 @@ class CardDB:
                     cost=int(a.get("cost", 1)),
                     damage=int(a.get("damage", 0)),
                     name=str(a.get("name", "")),
+                    self_damage=int(a.get("self_damage", 0)),
+                    bench_damage=int(a.get("bench_damage", 0)),
+                    bench_targets=int(a.get("bench_targets", 0)),
+                    attaches_energy=int(a.get("attaches_energy", 0)),
+                    discards_energy=int(a.get("discards_energy", 0)),
+                    cant_attack_next=bool(a.get("cant_attack_next", False)),
+                    heal=int(a.get("heal", 0)),
                 )
                 for a in (c.get("attacks") or [])
             ]

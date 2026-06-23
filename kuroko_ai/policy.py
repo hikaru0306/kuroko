@@ -79,22 +79,15 @@ class Policy:
         return [d.options[0]]
 
     def _best_attack(self, state: GameState, attacks: list[Option]) -> Option:
-        """ワザ選択。KOできるなら『KOできる中で最小打点』(打点温存)、
-        できないなら『最大打点』を選ぶ。打点は deck.yaml の実測値。"""
+        """ワザ選択。最大打点ではなく『効率スコア』で選ぶ。
+
+        効率スコアは副作用込み（反動・エネ加速/捨て・ベンチ打点・次攻撃不可など）。
+        KOできるワザ同士でも、反動やエネ捨ての少ない＝後に響かない方を選ぶ。
+        詳細は evaluation.Evaluator.attack_score。
+        """
         opp_active = state.opp.active
         target_id = opp_active[0].id if opp_active else None
-
-        ko = []
-        for o in attacks:
-            if o.attack_id is None:
-                continue
-            if target_id is not None and self.eval.does_ko(o.attack_id, target_id):
-                ko.append(o)
-        if ko:
-            # KOできる中で打点が最小のもの（オーバーキルを避けエネ温存）
-            return min(ko, key=lambda o: self.eval.attack_damage(o.attack_id) or 0)
-        # KO不可: 最大打点（不明打点は控えめ評価）
-        return max(attacks, key=lambda o: (self.eval.attack_damage(o.attack_id) or 0))
+        return max(attacks, key=lambda o: self.eval.attack_score(o.attack_id, target_id))
 
     def _find_ko_attack(self, state: GameState, d: Decision):
         """相手アクティブを確実に倒せるワザ option を返す（無ければ None）。"""

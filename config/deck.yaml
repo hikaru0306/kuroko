@@ -48,8 +48,16 @@ cards:
     hp: 400                        # 実測推定・要確認
     evolves_from: 722              # 実測推定
     role: main_attacker            # 最大打点のアタッカー
+    # ワザの副作用を書くと「最大打点」ではなく効率で選ぶようになる。
+    # 使えるフィールド（任意・既定0/false）:
+    #   damage, cost, self_damage(反動), discards_energy(エネ捨て),
+    #   cant_attack_next(次ターン攻撃不可), bench_damage & bench_targets(ベンチ攻撃),
+    #   attaches_energy(攻撃しながらエネ加速), heal(回復)
+    # 例: 高打点だが反動とエネ捨てがある主力ワザ →
+    #   - {id: 1046, damage: 300, self_damage: 30, discards_energy: 2}
+    # 現状は公式効果が未確認のため打点のみ（要・公式カードリストで補完）。
     attacks:
-      - {id: 1046, damage: 300}    # 主力ワザ
+      - {id: 1046, damage: 300}    # 主力ワザ（効果は要確認）
       - {id: 1047, damage: 200}
 
   # --- トレーナーズ or 控えポケモン（実測では判別不能 → 要・公式リスト確認） ---
