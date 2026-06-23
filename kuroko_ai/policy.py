@@ -68,14 +68,33 @@ class Policy:
                     best, best_val = opt, val
             return [best] if best is not None else [d.options[0]]
 
-        # engine_order: 既定はエンジン順の先頭(index 0)を信頼する。
-        # KO 上書きは「正確なカードDB（HP/ワザ打点）」がある時のみ有効化する。
-        # 仮データのままだと誤KO判定で早すぎる攻撃をして逆効果になるため既定 OFF。
+        # engine_order: 基本はエンジン順の先頭(index 0)を信頼する。
+        # ただし攻撃局面（先頭がワザ＝展開を一通り終えた状態）に限り、
+        # ワザ選択だけは最適化する: KOできるなら最小打点でKO、無理なら最大打点。
         if self.cfg.get("enable_ko_override", False):
-            ko = self._find_ko_attack(state, d)
-            if ko is not None:
-                return [ko]
+            attacks = [o for o in d.options if o.type == OptionType.ATTACK]
+            head_is_attack = d.options and d.options[0].type == OptionType.ATTACK
+            if attacks and (head_is_attack or self._find_ko_attack(state, d) is not None):
+                return [self._best_attack(state, attacks)]
         return [d.options[0]]
+
+    def _best_attack(self, state: GameState, attacks: list[Option]) -> Option:
+        """ワザ選択。KOできるなら『KOできる中で最小打点』(打点温存)、
+        できないなら『最大打点』を選ぶ。打点は deck.yaml の実測値。"""
+        opp_active = state.opp.active
+        target_id = opp_active[0].id if opp_active else None
+
+        ko = []
+        for o in attacks:
+            if o.attack_id is None:
+                continue
+            if target_id is not None and self.eval.does_ko(o.attack_id, target_id):
+                ko.append(o)
+        if ko:
+            # KOできる中で打点が最小のもの（オーバーキルを避けエネ温存）
+            return min(ko, key=lambda o: self.eval.attack_damage(o.attack_id) or 0)
+        # KO不可: 最大打点（不明打点は控えめ評価）
+        return max(attacks, key=lambda o: (self.eval.attack_damage(o.attack_id) or 0))
 
     def _find_ko_attack(self, state: GameState, d: Decision):
         """相手アクティブを確実に倒せるワザ option を返す（無ければ None）。"""
