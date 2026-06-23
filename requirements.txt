@@ -1,0 +1,4 @@
+# ローカル開発・検証用。Kaggle 提出物自体は標準ライブラリ + 同梱コードのみで動く。
+kaggle-environments>=1.14.10
+pyyaml>=6.0
+pytest>=7.0

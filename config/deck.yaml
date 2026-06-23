@@ -1,0 +1,61 @@
+# =====================================================================
+# デッキ定義 + カード知識ベース
+# =====================================================================
+# observation には「カードid」しか来ないため、各idが何のカードかは
+# ここで人が定義する（= 公式サイトの「指定カードリスト」を見て埋める）。
+#
+# ★ 下の cards: の中身は self-play で出現したidに対する“仮の役割付け”です。
+#    各 name / category / hp / 役割は公式カードリストで必ず確認・修正してください。
+#    （最低限 main_attacker と basic_energy が正しければ、エネ付け先と
+#      攻撃の狙いが機能します）
+#
+# deck: を書くとこちらが deck.csv より優先されます（どちらか一方でOK）。
+# ここでは deck.csv を真実の源にするため deck: は省略しています。
+
+cards:
+  3:
+    name: "基本エネルギー(仮)"
+    category: basic_energy
+
+  721:
+    name: "ポケモンA(仮)"
+    category: pokemon
+    stage: 0          # たね
+    hp: 70
+    role: starter
+
+  722:
+    name: "ポケモンB(仮)"
+    category: pokemon
+    stage: 1
+    hp: 90
+    evolves_from: 721
+
+  723:
+    name: "ポケモンC(仮)"
+    category: pokemon
+    stage: 2
+    hp: 160
+    evolves_from: 722
+    role: sub_attacker
+
+  1219:
+    name: "メインアタッカー(仮)"
+    category: pokemon
+    stage: 0
+    hp: 230
+    is_ex: true
+    role: main_attacker
+    attacks:
+      - {id: 1044, cost: 2, damage: 200}   # ← attackId/打点は要確認
+
+  1092:
+    name: "トレーナーズ(仮)"
+    category: supporter
+    role: draw
+
+  1121: {name: "トレーナーズ(仮)", category: supporter, role: search}
+  1145: {name: "ポケモン(仮)", category: pokemon, stage: 0, hp: 70}
+  1163: {name: "グッズ(仮)", category: item}
+  1227: {name: "グッズ(仮)", category: item}
+  1262: {name: "サポート(仮)", category: supporter, role: draw}
