@@ -14,7 +14,16 @@ Claude Code で Fable 5 流の使い方(長時間自律実行・段階的計画�
 | `/fable-delegate [タスク]` | 独立サブタスクを並列サブエージェントに委譲 |
 | `/fable-memory record\|recall\|bootstrap` | セッションをまたぐ教訓ノートの記録・参照 |
 | `/fable-report [対象]` | 証拠に基づく読みやすい完了報告を生成 |
+| `/fable-boost [タスク]` | Opusなど他モデルでFable 5との差を埋める強化手順(複数候補+審査、検証の外部化) |
+| `/fable-intent [依頼]` | プロンプトの背後の意図を予測し、先回りする |
 | `fable-style` | 動作原則の背景知識(Claudeが自動参照、コマンドなし) |
+
+## ドメインスキル
+
+| コマンド | 用途 |
+| --- | --- |
+| `/game-dev [やりたいこと]` | ゲーム制作: エンジン選定・コアループ設計・ゲームフィール・バランス調整の知識ベース |
+| `/video-edit [やりたいこと]` | 動画編集: ffmpeg実務レシピ・エンコード設定・配信プリセット・編集理論 |
 
 典型的な流れ: `/fable-plan` で計画 → `/fable-run` で実行(内部で `/fable-verify` と `/fable-memory` を活用)→ `/fable-report` で報告。
 

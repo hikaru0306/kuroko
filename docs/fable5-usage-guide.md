@@ -32,9 +32,17 @@
 | `/fable-delegate` | 並列サブエージェント委譲 | 6 |
 | `/fable-memory` | 外部メモリ(教訓ノート) | 5 |
 | `/fable-report` | 証拠ベースの再グラウンディング報告 | 7 |
+| `/fable-boost` | 他モデルでのFable 5ギャップ補正(生成回数と検証回数で品質を買う) | 2, 4 |
+| `/fable-intent` | 意図予測・先回り(「なぜ頼まれたか」の明示的推定) | 2 |
 | `fable-style` | 動作原則の背景知識(自動参照) | 2, 7, 9 |
 
+ドメインスキルとして `/game-dev`(エンジン選定・コアループ・ゲームフィール)と `/video-edit`(ffmpegレシピ・エンコード設定・編集理論)も収録。
+
 Fable 5以外のモデル(Opus 4.8など)で使っても、同じワークフローを再現できるように書いてある。
+
+### Opus 4.8とのギャップについて
+
+スキルはモデルの素の能力(初回正答率、長期一貫性、曖昧さの処理)そのものを変えることはできない。`/fable-boost` はその差を「追加の調査・複数候補生成・別コンテキスト検証・ファイルベースメモリ」という追加計算で補う設計。知識系スキル(`/game-dev`、`/video-edit`)は、どのモデルでも同じ知識ベース・同じ手順で作業させることで出力の再現性を揃える。
 
 ## 注意点
 
@@ -51,3 +59,7 @@ Fable 5以外のモデル(Opus 4.8など)で使っても、同じワークフロ
 - [Claude Fable 5 brings Mythos to the masses — Tom's Hardware](https://www.tomshardware.com/tech-industry/artificial-intelligence/claude-fable-5-brings-mythos-to-the-masses-anthropics-next-frontier-model-is-state-of-the-art-on-nearly-all-tested-benchmarks)
 - [Anthropic's Claude Fable 5 is a version of Mythos the public can access today — TechCrunch](https://techcrunch.com/2026/06/09/anthropic-released-claude-fable-5-its-most-powerful-model-publicly-days-after-warning-ai-is-getting-too-dangerous/)
 - [Extend Claude with skills — Claude Code Docs](https://code.claude.com/docs/en/skills)
+- [Godot vs Unity in 2026 — DEV Community](https://dev.to/linou518/godot-vs-unity-in-2026-which-engine-should-indie-developers-choose-50g4)
+- [Best Game Development Engines in 2026](https://phantomcave.com/blog/best-game-development-engines/)
+- [AV1 encoder guide — ffmpeg.party](https://ffmpeg.party/guides/av1/)
+- [FFmpeg in Production — getstream.io](https://getstream.io/blog/ffmpeg/)
